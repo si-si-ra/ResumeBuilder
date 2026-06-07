@@ -6,7 +6,7 @@ import ProjectForm        from './forms/ProjectForm';
 import SkillForm          from './forms/SkillForm';
 import CertificationForm  from './forms/CertificationForm';
 import TemplateSelector   from './forms/TemplateSelector';
-import './FormPanel.css';
+import '../styles/FormPanel.css';
 
 const SECTION_MAP = {
   personal:       PersonalInfoForm,
