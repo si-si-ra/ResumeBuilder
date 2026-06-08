@@ -19,11 +19,12 @@ export default function PreviewPanel() {
     const { default: html2pdf } = await import('html2pdf.js');
     const el = printRef.current;
     const opt = {
-      margin:      [10, 10, 10, 10],
+      margin:      [5, 5, 5, 5],
       filename:    `${resume.full_name || 'resume'}.pdf`,
       image:       { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true },
-      jsPDF:       { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      html2canvas: { scale: 2, useCORS: true, windowHeight: el.scrollHeight },
+      jsPDF:       { unit: 'mm', format: 'a4', orientation: 'portrait', compress: true },
+      pagebreak:   { mode: 'avoid-all' },
     };
     html2pdf().set(opt).from(el).save();
   };
