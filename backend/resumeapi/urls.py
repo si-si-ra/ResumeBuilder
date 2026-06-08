@@ -2,6 +2,11 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    # Authentication
+    path('auth/register/', views.register, name='register'),
+    path('auth/login/', views.login, name='login'),
+    path('auth/refresh/', views.refresh_token, name='refresh-token'),
+
     # Resume
     path('resume/',            views.resume_list_create, name='resume-list-create'),
     path('resume/<int:pk>/',   views.resume_detail,      name='resume-detail'),

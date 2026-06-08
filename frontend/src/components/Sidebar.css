@@ -88,6 +88,9 @@
 .sidebar-footer {
   padding: 16px 12px 0;
   border-top: 1px solid rgba(255,255,255,.08);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .dark-toggle {
@@ -105,4 +108,24 @@
 .dark-toggle:hover {
   background: rgba(255,255,255,.12);
   color: #e2e8f0;
+}
+
+.logout-button {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(239, 68, 68, 0.1);
+  color: #fca5a5;
+  font-size: .85rem;
+  font-weight: 600;
+  transition: all .18s;
+  text-align: left;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  cursor: pointer;
+}
+
+.logout-button:hover {
+  background: rgba(239, 68, 68, 0.2);
+  color: #fecaca;
+  border-color: rgba(239, 68, 68, 0.5);
 }

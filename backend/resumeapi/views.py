@@ -1,7 +1,11 @@
-from rest_framework.decorators import api_view, parser_classes
+from rest_framework.decorators import api_view, parser_classes, permission_classes
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from .models import Resume, Education, Experience, Project, Skill, Certification
 from .serializers import (
@@ -11,23 +15,134 @@ from .serializers import (
 )
 
 
+# ── AUTHENTICATION ────────────────────────────────────────────
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def register(request):
+    """
+    POST /api/auth/register/ – Register a new user
+    Expected: { "username": "...", "email": "...", "password": "..." }
+    """
+    username = request.data.get('username')
+    email = request.data.get('email')
+    password = request.data.get('password')
+
+    if not username or not email or not password:
+        return Response(
+            {'error': 'Username, email, and password are required.'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    if User.objects.filter(username=username).exists():
+        return Response(
+            {'error': 'Username already exists.'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    if User.objects.filter(email=email).exists():
+        return Response(
+            {'error': 'Email already exists.'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    user = User.objects.create_user(username=username, email=email, password=password)
+    # Create an empty resume for the user
+    Resume.objects.create(user=user, full_name='', email=email)
+
+    refresh = RefreshToken.for_user(user)
+    return Response({
+        'refresh': str(refresh),
+        'access': str(refresh.access_token),
+        'user': {'id': user.id, 'username': user.username, 'email': user.email}
+    }, status=status.HTTP_201_CREATED)
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def login(request):
+    """
+    POST /api/auth/login/ – Login user
+    Expected: { "username": "...", "password": "..." }
+    """
+    username = request.data.get('username')
+    password = request.data.get('password')
+
+    if not username or not password:
+        return Response(
+            {'error': 'Username and password are required.'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    user = authenticate(username=username, password=password)
+    if not user:
+        return Response(
+            {'error': 'Invalid credentials.'},
+            status=status.HTTP_401_UNAUTHORIZED
+        )
+
+    refresh = RefreshToken.for_user(user)
+    return Response({
+        'refresh': str(refresh),
+        'access': str(refresh.access_token),
+        'user': {'id': user.id, 'username': user.username, 'email': user.email}
+    })
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def refresh_token(request):
+    """
+    POST /api/auth/refresh/ – Refresh access token
+    Expected: { "refresh": "..." }
+    """
+    refresh = request.data.get('refresh')
+    if not refresh:
+        return Response(
+            {'error': 'Refresh token is required.'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    try:
+        refresh_token = RefreshToken(refresh)
+        return Response({
+            'access': str(refresh_token.access_token)
+        })
+    except Exception as e:
+        return Response(
+            {'error': 'Invalid refresh token.'},
+            status=status.HTTP_401_UNAUTHORIZED
+        )
+
+
 # ── RESUME ────────────────────────────────────────────────────
 
 @api_view(['GET', 'POST'])
 @parser_classes([MultiPartParser, FormParser, JSONParser])
+@permission_classes([IsAuthenticated])
 def resume_list_create(request):
     """
-    GET  /api/resume/         – list all resumes
-    POST /api/resume/         – create a new resume
+    GET  /api/resume/         – get authenticated user's resume
+    POST /api/resume/         – create a new resume (if user doesn't have one)
     """
     if request.method == 'GET':
-        resumes = Resume.objects.all().order_by('-updated_at')
-        serializer = ResumeSerializer(resumes, many=True, context={'request': request})
-        return Response(serializer.data)
+        try:
+            resume = Resume.objects.get(user=request.user)
+            serializer = ResumeSerializer(resume, context={'request': request})
+            return Response(serializer.data)
+        except Resume.DoesNotExist:
+            return Response({'error': 'No resume found for this user.'}, status=status.HTTP_404_NOT_FOUND)
+
+    # POST - Create only if user doesn't have one
+    try:
+        Resume.objects.get(user=request.user)
+        return Response({'error': 'User already has a resume.'}, status=status.HTTP_400_BAD_REQUEST)
+    except Resume.DoesNotExist:
+        pass
 
     serializer = ResumeWriteSerializer(data=request.data)
     if serializer.is_valid():
-        resume = serializer.save()
+        resume = serializer.save(user=request.user)
         out = ResumeSerializer(resume, context={'request': request})
         return Response(out.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -35,6 +150,7 @@ def resume_list_create(request):
 
 @api_view(['GET', 'PUT', 'PATCH', 'DELETE'])
 @parser_classes([MultiPartParser, FormParser, JSONParser])
+@permission_classes([IsAuthenticated])
 def resume_detail(request, pk):
     """
     GET    /api/resume/<pk>/  – retrieve with all nested data
@@ -43,9 +159,9 @@ def resume_detail(request, pk):
     DELETE /api/resume/<pk>/  – delete
     """
     try:
-        resume = Resume.objects.get(pk=pk)
+        resume = Resume.objects.get(pk=pk, user=request.user)
     except Resume.DoesNotExist:
-        return Response({'error': 'Resume not found.'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'error': 'Resume not found or unauthorized.'}, status=status.HTTP_404_NOT_FOUND)
 
     if request.method == 'GET':
         serializer = ResumeSerializer(resume, context={'request': request})

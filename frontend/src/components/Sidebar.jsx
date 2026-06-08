@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { useResume } from '../ResumeContext';
 import './Sidebar.css';
 
@@ -12,7 +13,18 @@ const NAV = [
 ];
 
 export default function Sidebar() {
+  const navigate = useNavigate();
   const { activeSection, setActiveSection, darkMode, setDarkMode, resume, saved } = useResume();
+
+  const handleLogout = () => {
+    // Clear local storage
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    localStorage.removeItem('user');
+
+    // Redirect to login
+    navigate('/login');
+  };
 
   return (
     <aside className="sidebar">
@@ -47,6 +59,12 @@ export default function Sidebar() {
           onClick={() => setDarkMode(!darkMode)}
         >
           {darkMode ? '☀️ Light Mode' : '🌙 Dark Mode'}
+        </button>
+        <button
+          className="logout-button"
+          onClick={handleLogout}
+        >
+          🚪 Logout
         </button>
       </div>
     </aside>

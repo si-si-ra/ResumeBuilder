@@ -1,11 +1,15 @@
 import { useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ResumeProvider, useResume } from './ResumeContext';
 import Sidebar     from './components/Sidebar';
 import FormPanel   from './components/FormPanel';
 import PreviewPanel from './components/PreviewPanel';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import ProtectedRoute from './ProtectedRoute';
 import './styles/App.css';
 
-function Inner() {
+function ResumeBuilder() {
   const { darkMode } = useResume();
 
   useEffect(() => {
@@ -23,10 +27,32 @@ function Inner() {
   );
 }
 
+function AppRoutes() {
+  const token = localStorage.getItem('access_token');
+
+  return (
+    <Routes>
+      <Route path="/login" element={token ? <Navigate to="/resume" /> : <Login />} />
+      <Route path="/register" element={token ? <Navigate to="/resume" /> : <Register />} />
+      <Route
+        path="/resume"
+        element={
+          <ProtectedRoute>
+            <ResumeBuilder />
+          </ProtectedRoute>
+        }
+      />
+      <Route path="/" element={token ? <Navigate to="/resume" /> : <Navigate to="/login" />} />
+    </Routes>
+  );
+}
+
 export default function App() {
   return (
-    <ResumeProvider>
-      <Inner />
-    </ResumeProvider>
+    <BrowserRouter>
+      <ResumeProvider>
+        <AppRoutes />
+      </ResumeProvider>
+    </BrowserRouter>
   );
 }
