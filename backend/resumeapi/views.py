@@ -131,7 +131,27 @@ def resume_list_create(request):
             serializer = ResumeSerializer(resume, context={'request': request})
             return Response(serializer.data)
         except Resume.DoesNotExist:
-            return Response({'error': 'No resume found for this user.'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({
+                'id': None,
+                'user': request.user.id,
+                'full_name': '',
+                'email': '',
+                'phone': '',
+                'address': '',
+                'linkedin': '',
+                'github': '',
+                'portfolio': '',
+                'summary': '',
+                'photo': None,
+                'template': 'classic',
+                'created_at': None,
+                'updated_at': None,
+                'experiences': [],
+                'educations': [],
+                'projects': [],
+                'skills': [],
+                'certifications': [],
+            })
 
     # POST - Create only if user doesn't have one
     try:

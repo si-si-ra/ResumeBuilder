@@ -1,4 +1,5 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
+import api from './api';
 
 const ResumeContext = createContext(null);
 
@@ -16,6 +17,32 @@ export function ResumeProvider({ children }) {
   const [activeSection, setActiveSection] = useState('personal');
   const [saving, setSaving]       = useState(false);
   const [saved, setSaved]         = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem('access_token');
+    if (!token) return;
+
+    let cancelled = false;
+    const loadResume = async () => {
+      try {
+        const response = await api.get('/resume/');
+        if (cancelled) return;
+        setResume(response.data || emptyResume);
+      } catch (err) {
+        if (cancelled) return;
+        if (err.response?.status === 401) {
+          localStorage.removeItem('access_token');
+          localStorage.removeItem('refresh_token');
+          localStorage.removeItem('user');
+          window.location.href = '/login';
+          return;
+        }
+      }
+    };
+
+    loadResume();
+    return () => { cancelled = true; };
+  }, []);
 
   const flashSaved = () => {
     setSaved(true);

@@ -12,7 +12,7 @@ class Resume(models.Model):
     github      = models.URLField(blank=True)
     portfolio   = models.URLField(blank=True)
     summary     = models.TextField(blank=True)
-    photo       = models.ImageField(upload_to='photos/', blank=True, null=True)
+    photo       = models.ImageField(upload_to='photos/', blank=True, null=True, max_length=255)
     # chosen template: classic | modern | minimal
     template    = models.CharField(max_length=20, default='classic')
     created_at  = models.DateTimeField(auto_now_add=True)

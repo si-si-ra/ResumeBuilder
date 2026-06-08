@@ -18,13 +18,67 @@ export default function PersonalInfoForm() {
     if (file) setResume(prev => ({ ...prev, photo: file, photoPreview: URL.createObjectURL(file) }));
   };
 
+  const normalizeUrl = (value) => {
+    const trimmed = value?.trim() || '';
+    if (!trimmed) return '';
+    if (/^[a-z][a-z0-9+.-]*:\/\//i.test(trimmed)) {
+      return trimmed;
+    }
+    return `https://${trimmed}`;
+  };
+
+  const isValidUrl = (value) => {
+    const trimmed = value?.trim();
+    if (!trimmed) return true;
+    try {
+      const url = new URL(normalizeUrl(trimmed));
+      return ['http:', 'https:'].includes(url.protocol);
+    } catch {
+      return false;
+    }
+  };
+
+  const validateForm = () => {
+    const errors = [];
+    if (!resume.full_name?.trim()) {
+      errors.push('Full name is required.');
+    }
+    if (!resume.email?.trim()) {
+      errors.push('Email is required.');
+    } else if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(resume.email)) {
+      errors.push('Enter a valid email address.');
+    }
+    if (resume.linkedin && !isValidUrl(resume.linkedin)) {
+      errors.push('Enter a valid LinkedIn URL.');
+    }
+    if (resume.github && !isValidUrl(resume.github)) {
+      errors.push('Enter a valid GitHub URL.');
+    }
+    if (resume.portfolio && !isValidUrl(resume.portfolio)) {
+      errors.push('Enter a valid portfolio or website URL.');
+    }
+    return errors;
+  };
+
   const handleSave = async () => {
+    const validationErrors = validateForm();
+    if (validationErrors.length > 0) {
+      alert(validationErrors.join('\n'));
+      return;
+    }
+
     setLocalSaving(true);
     setSaving(true);
     try {
       const fd = new FormData();
       const fields = ['full_name','email','phone','address','linkedin','github','portfolio','summary','template'];
-      fields.forEach(f => fd.append(f, resume[f] || ''));
+      fields.forEach((f) => {
+        let value = resume[f] || '';
+        if (['linkedin', 'github', 'portfolio'].includes(f)) {
+          value = normalizeUrl(value);
+        }
+        fd.append(f, value);
+      });
       if (resume.photo instanceof File) fd.append('photo', resume.photo);
 
       let res;
@@ -36,7 +90,8 @@ export default function PersonalInfoForm() {
       setResume(prev => ({ ...prev, ...res.data, photoPreview: prev.photoPreview }));
       flashSaved();
     } catch (err) {
-      alert('Save failed. Is Django running?');
+      const message = err.response?.data || err.message || 'Save failed. Is Django running?';
+      alert(`Save failed: ${JSON.stringify(message)}`);
       console.error(err);
     } finally {
       setLocalSaving(false);

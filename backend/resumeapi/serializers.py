@@ -1,5 +1,18 @@
+from urllib.parse import urlparse
+
 from rest_framework import serializers
 from .models import Resume, Education, Experience, Project, Skill, Certification
+
+
+def normalize_url(value):
+    if not value:
+        return value
+
+    url = value.strip()
+    parsed = urlparse(url)
+    if not parsed.scheme:
+        url = 'https://' + url
+    return url
 
 
 class EducationSerializer(serializers.ModelSerializer):
@@ -46,6 +59,24 @@ class ResumeSerializer(serializers.ModelSerializer):
 
 class ResumeWriteSerializer(serializers.ModelSerializer):
     """Used for create/update — no nested reads needed."""
+
     class Meta:
         model = Resume
         fields = '__all__'
+        extra_kwargs = {
+            'user': {'read_only': True},
+        }
+
+    def validate_linkedin(self, value):
+        return normalize_url(value)
+
+    def validate_github(self, value):
+        return normalize_url(value)
+
+    def validate_portfolio(self, value):
+        return normalize_url(value)
+
+    def validate_photo(self, value):
+        if value and len(value.name) > 250:
+            value.name = value.name[-250:]
+        return value
