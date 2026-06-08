@@ -72,19 +72,19 @@ export default function CertificationForm() {
           <div className="form-grid">
             <div className="field span-2">
               <label>Certificate Title *</label>
-              <input name="title" value={form.title} onChange={handle} placeholder="Python for Everybody" />
+              <input name="title" value={form.title} onChange={handle} placeholder="Enter certificate title" />
             </div>
             <div className="field">
               <label>Issuer / Platform</label>
-              <input name="issuer" value={form.issuer} onChange={handle} placeholder="Coursera / Udemy / NPTEL" />
+              <input name="issuer" value={form.issuer} onChange={handle} placeholder="Enter issuer or platform name" />
             </div>
             <div className="field">
               <label>Year</label>
-              <input name="year" value={form.year} onChange={handle} placeholder="2024" />
+              <input name="year" value={form.year} onChange={handle} placeholder="e.g., 2024" />
             </div>
             <div className="field span-2">
               <label>Certificate Link</label>
-              <input name="link" value={form.link} onChange={handle} placeholder="https://coursera.org/certificate/..." />
+              <input name="link" value={form.link} onChange={handle} placeholder="Enter certificate URL" />
             </div>
           </div>
           <div className="form-actions">

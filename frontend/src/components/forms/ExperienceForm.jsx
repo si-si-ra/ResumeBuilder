@@ -85,29 +85,29 @@ export default function ExperienceForm() {
           <div className="form-grid">
             <div className="field">
               <label>Job Title *</label>
-              <input name="job_title" value={form.job_title} onChange={handle} placeholder="Junior Django Developer" />
+              <input name="job_title" value={form.job_title} onChange={handle} placeholder="Enter job title" />
             </div>
             <div className="field">
               <label>Company *</label>
-              <input name="company" value={form.company} onChange={handle} placeholder="Techlyra Info Systems" />
+              <input name="company" value={form.company} onChange={handle} placeholder="Enter company name" />
             </div>
             <div className="field">
               <label>Location</label>
-              <input name="location" value={form.location} onChange={handle} placeholder="Thrissur, Kerala" />
+              <input name="location" value={form.location} onChange={handle} placeholder="Enter location" />
             </div>
             <div className="field" />
             <div className="field">
               <label>Start Date</label>
-              <input name="start_date" value={form.start_date} onChange={handle} placeholder="Oct 2025" />
+              <input name="start_date" value={form.start_date} onChange={handle} placeholder="e.g., Oct 2025" />
             </div>
             <div className="field">
               <label>End Date</label>
-              <input name="end_date" value={form.end_date} onChange={handle} placeholder="Present" />
+              <input name="end_date" value={form.end_date} onChange={handle} placeholder="e.g., Present or Jun 2024" />
             </div>
             <div className="field span-2">
               <label>Description</label>
               <textarea name="description" value={form.description} onChange={handle} rows={3}
-                placeholder="• Built REST APIs using Django REST Framework&#10;• Developed React components for LyraERP dashboard" />
+                placeholder="Describe your responsibilities and key achievements..." />
             </div>
           </div>
           <div className="form-actions">

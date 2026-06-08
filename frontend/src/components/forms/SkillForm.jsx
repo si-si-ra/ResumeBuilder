@@ -75,7 +75,7 @@ export default function SkillForm() {
                 value={input}
                 onChange={e => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="e.g. Python"
+                placeholder="Enter a skill"
                 style={{ flex: 1 }}
               />
               <button className="btn btn-primary" onClick={() => addSkill(input)} disabled={saving || !input.trim()}>

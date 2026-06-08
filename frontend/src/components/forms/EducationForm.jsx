@@ -73,19 +73,19 @@ export default function EducationForm() {
           <div className="form-grid">
             <div className="field span-2">
               <label>Degree / Course *</label>
-              <input name="degree" value={form.degree} onChange={handle} placeholder="MCA (Master of Computer Applications)" />
+              <input name="degree" value={form.degree} onChange={handle} placeholder="Enter degree or course name" />
             </div>
             <div className="field span-2">
               <label>College / University *</label>
-              <input name="college" value={form.college} onChange={handle} placeholder="IGNOU" />
+              <input name="college" value={form.college} onChange={handle} placeholder="Enter college or university name" />
             </div>
             <div className="field">
-              <label>Year</label>
-              <input name="year" value={form.year} onChange={handle} placeholder="2024 – 2026" />
+              <label>Year *</label>
+              <input name="year" value={form.year} onChange={handle} placeholder="e.g., 2021 – 2024" />
             </div>
             <div className="field">
-              <label>CGPA / Percentage</label>
-              <input name="cgpa" value={form.cgpa} onChange={handle} placeholder="8.5 CGPA" />
+              <label>CGPA / Score</label>
+              <input name="cgpa" value={form.cgpa} onChange={handle} placeholder="e.g., 8.5 / 10" />
             </div>
           </div>
           <div className="form-actions">

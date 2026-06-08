@@ -81,31 +81,31 @@ export default function PersonalInfoForm() {
         <div className="form-grid">
           <div className="field">
             <label>Full Name *</label>
-            <input name="full_name" value={resume.full_name} onChange={handle} placeholder="Sisira K" />
+            <input name="full_name" value={resume.full_name} onChange={handle} placeholder="Enter your full name" />
           </div>
           <div className="field">
             <label>Email *</label>
-            <input name="email" type="email" value={resume.email} onChange={handle} placeholder="sisira@email.com" />
+            <input name="email" type="email" value={resume.email} onChange={handle} placeholder="Enter your email address" />
           </div>
           <div className="field">
             <label>Phone</label>
-            <input name="phone" value={resume.phone} onChange={handle} placeholder="+91 9876543210" />
+            <input name="phone" value={resume.phone} onChange={handle} placeholder="Enter your phone number" />
           </div>
           <div className="field">
             <label>Address</label>
-            <input name="address" value={resume.address} onChange={handle} placeholder="Thrissur, Kerala, India" />
+            <input name="address" value={resume.address} onChange={handle} placeholder="Enter your address" />
           </div>
           <div className="field">
             <label>LinkedIn URL</label>
-            <input name="linkedin" value={resume.linkedin} onChange={handle} placeholder="https://linkedin.com/in/yourprofile" />
+            <input name="linkedin" value={resume.linkedin} onChange={handle} placeholder="Enter your LinkedIn profile URL" />
           </div>
           <div className="field">
             <label>GitHub URL</label>
-            <input name="github" value={resume.github} onChange={handle} placeholder="https://github.com/yourusername" />
+            <input name="github" value={resume.github} onChange={handle} placeholder="Enter your GitHub profile URL" />
           </div>
           <div className="field">
             <label>Portfolio / Website</label>
-            <input name="portfolio" value={resume.portfolio} onChange={handle} placeholder="https://yourportfolio.com" />
+            <input name="portfolio" value={resume.portfolio} onChange={handle} placeholder="Enter your portfolio website URL" />
           </div>
           <div className="field span-2">
             <label>Professional Summary</label>
@@ -114,7 +114,7 @@ export default function PersonalInfoForm() {
               value={resume.summary}
               onChange={handle}
               rows={4}
-              placeholder="Full Stack Developer with 1+ year experience in Django and React..."
+              placeholder="Enter a brief professional summary about yourself..."
             />
           </div>
         </div>

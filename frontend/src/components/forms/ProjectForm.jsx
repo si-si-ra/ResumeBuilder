@@ -73,20 +73,20 @@ export default function ProjectForm() {
           <div className="form-grid">
             <div className="field span-2">
               <label>Project Title *</label>
-              <input name="title" value={form.title} onChange={handle} placeholder="Task Manager App" />
+              <input name="title" value={form.title} onChange={handle} placeholder="Enter project name" />
             </div>
             <div className="field span-2">
               <label>Technologies Used</label>
-              <input name="technologies" value={form.technologies} onChange={handle} placeholder="Django, React, PostgreSQL, Tailwind CSS" />
+              <input name="technologies" value={form.technologies} onChange={handle} placeholder="Enter technologies used (comma-separated)" />
             </div>
             <div className="field span-2">
               <label>Description</label>
               <textarea name="description" value={form.description} onChange={handle} rows={3}
-                placeholder="Full-stack task management app with JWT auth, drag-and-drop kanban board, and REST API..." />
+                placeholder="Describe your project and its key features..." />
             </div>
             <div className="field span-2">
               <label>GitHub / Live Link</label>
-              <input name="link" value={form.link} onChange={handle} placeholder="https://github.com/yourusername/project" />
+              <input name="link" value={form.link} onChange={handle} placeholder="Enter project URL" />
             </div>
           </div>
           <div className="form-actions">
